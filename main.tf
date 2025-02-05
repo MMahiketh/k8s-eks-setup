@@ -4,7 +4,7 @@ resource "aws_instance" "workstation" {
   key_name      = "linux-key devops shiva"
   user_data     = file("setup.sh")
 
-  user_data_replace_on_change = false
+  user_data_replace_on_change = true
   vpc_security_group_ids      = [local.sg]
 
   tags = {
@@ -33,6 +33,13 @@ resource "aws_instance" "workstation" {
       # "echo 'region = us-east-1' >> /home/ec2-user/.aws/config",
       # "git clone https://github.com/MMahiketh/k8s-eks-setup.git",
       "eksctl create cluster --config-file=k8s-eks-setup/eks.yaml"
+    ]
+  }
+
+  provisioner "remote-exec" {
+    when   = destroy
+    inline = [
+      "eksctl delete cluster --config-file=k8s-eks-setup/eks.yaml"
     ]
   }
 }
