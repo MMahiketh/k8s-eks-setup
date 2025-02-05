@@ -7,6 +7,8 @@ TIMESTAMP=$(date +%Y-%m-%d::%H:%M:%S)
 LOG_FILE="$LOG_FOLDER/$SCRIPT_NAME-$TIMESTAMP.log"
 USERID=$(id -u)
 
+AWS_CONFIG_FOLDER="/home/ec2-user/.aws/"
+
 mkdir -p $LOG_FOLDER
 
 R="\e[31m"
@@ -38,10 +40,9 @@ VALIDATE(){
 VALIDATE $USERID "Root user access" "Please execute the script as root user. Exiting..."
 
 # aws configure
-mkdir -p /home/ec2-user/.aws/
+mkdir -p $AWS_CONFIG_FOLDER
 VALIDATE $? "Creating .aws dir" "Failed to create dir. Exiting..."
-echo '[default]' > /home/ec2-user/.aws/config
-echo 'region = us-east-1' >> /home/ec2-user/.aws/config
+echo -e '[default]\nregion = us-east-1' > "$AWS_CONFIG_FOLDER/config"
 
 chown -R ec2-user:ec2-user /home/ec2-user
 
