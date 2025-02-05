@@ -96,6 +96,7 @@ VALIDATE $? "Test eksctl"
 # Create eks cluster
 cd /home/ec2-user/
 git clone https://github.com/MMahiketh/k8s-eks-setup.git
+git clone https://github.com/MMahiketh/k8s-prctc.git
 
 chown -R ec2-user:ec2-user /home/ec2-user
 

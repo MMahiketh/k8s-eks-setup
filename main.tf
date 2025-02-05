@@ -32,7 +32,16 @@ resource "aws_instance" "workstation" {
       # "echo '[default]' > /home/ec2-user/.aws/config",
       # "echo 'region = us-east-1' >> /home/ec2-user/.aws/config",
       # "git clone https://github.com/MMahiketh/k8s-eks-setup.git",
-      "eksctl create cluster --config-file=k8s-eks-setup/eks.yaml --dry-run"
+      "eksctl create cluster --config-file=k8s-eks-setup/eks.yaml"
     ]
   }
+}
+
+resource "aws_route53_record" "workstation" {
+  zone_id         = local.zone_id
+  name            = "workstation.${local.zone_name}"
+  type            = "A"
+  ttl             = 300
+  records         = [aws_instance.workstation.public_ip]
+  allow_overwrite = true
 }
