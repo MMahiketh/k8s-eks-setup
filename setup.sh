@@ -92,8 +92,12 @@ VALIDATE $? "Installing eksctl" "Failed to move eksctl. Exiting..."
 eksctl version &>> $LOG_FILE
 VALIDATE $? "Test eksctl"
 
+# install kubens
+git clone https://github.com/ahmetb/kubectx /opt/kubectx
+ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+ln -s /opt/kubectx/kubens /usr/local/bin/kubens
 
-# Create eks cluster
+# Config ec2-user
 cd /home/ec2-user/
 git clone https://github.com/MMahiketh/k8s-eks-setup.git
 git clone https://github.com/MMahiketh/k8s-prctc.git
