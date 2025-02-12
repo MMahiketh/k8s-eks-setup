@@ -27,12 +27,13 @@ resource "aws_instance" "workstation" {
 
   provisioner "remote-exec" {
     inline = [
-      "sleep 30",
+      "sleep 40",
       # "mkdir -p /home/ec2-user/.aws/",
       # "echo '[default]' > /home/ec2-user/.aws/config",
       # "echo 'region = us-east-1' >> /home/ec2-user/.aws/config",
       # "git clone https://github.com/MMahiketh/k8s-eks-setup.git",
-      "eksctl create cluster --config-file=k8s-eks-setup/eks.yaml"
+      "eksctl create cluster --config-file=k8s-eks-setup/eks.yaml",
+      "git clone https://github.com/MMahiketh/k8s-expense.git"
     ]
   }
 
