@@ -12,7 +12,6 @@ resource "aws_instance" "workstation" {
     Terraform = "True"
   }
 
-  # setup aws configuration
   connection {
     host        = self.public_ip
     type        = "ssh"
@@ -20,27 +19,37 @@ resource "aws_instance" "workstation" {
     private_key = file("../../linux-key")
   }
 
-  provisioner "file" {
-    source      = "~/.aws/credentials"
-    destination = "/home/ec2-user/.aws/credentials"
-  }
-
   provisioner "remote-exec" {
+    when = destroy
     inline = [
-      "sleep 40",
-      # "mkdir -p /home/ec2-user/.aws/",
-      # "echo '[default]' > /home/ec2-user/.aws/config",
-      # "echo 'region = us-east-1' >> /home/ec2-user/.aws/config",
-      # "git clone https://github.com/MMahiketh/k8s-eks-setup.git",
-      "eksctl create cluster --config-file=k8s-eks-setup/eks.yaml",
-      "git clone https://github.com/MMahiketh/k8s-expense.git"
+      "eksctl delete cluster --config-file=eks.yaml"
     ]
   }
+}
+
+resource "null_resource" "config_eks" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers = {
+    instance_id = aws_instance.workstation.id
+  }
+
+  connection {
+    host        = aws_instance.workstation.public_ip
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file("../../linux-key")
+  }
+
+  provisioner "file" {
+    source      = "config.sh"
+    destination = "/tmp/config.sh"
+  }
 
   provisioner "remote-exec" {
-    when   = destroy
     inline = [
-      "eksctl delete cluster --config-file=k8s-eks-setup/eks.yaml"
+      "sleep 60", # wait for workstation to run setup.sh
+      "chmod +x /tmp/config.sh",
+      "sh /tmp/config.sh ${var.aws_access_key} ${var.aws_secret_key} ${var.create_cluster__Y_or_n}"
     ]
   }
 }
