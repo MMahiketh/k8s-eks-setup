@@ -50,6 +50,7 @@ VALIDATE(){
 cd /home/ec2-user/
 git clone https://github.com/MMahiketh/k8s-prctc.git &>> $LOG_FILE
 git clone https://github.com/MMahiketh/k8s-expense.git &>> $LOG_FILE
+git clone https://github.com/MMahiketh/helm-expense.git &>> $LOG_FILE
 
 # aws configure
 aws configure set aws_access_key_id $DEFAULT_ACCESS_KEY
@@ -73,3 +74,9 @@ eksctl create cluster --config-file=eks.yaml
 # install ebs and efs drivers
 kubectl apply -k 'github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.39' &>> $LOG_FILE
 kubectl apply -k 'github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-2.1' &>> $LOG_FILE
+
+# install metrics server
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml &>> $LOG_FILE
+
+# install k9s
+curl -sS https://webinstall.dev/k9s | bash
